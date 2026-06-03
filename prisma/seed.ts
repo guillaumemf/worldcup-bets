@@ -156,7 +156,7 @@ async function main() {
   for (const m of matches) {
     const kickoffAt = parseKickoff(m.date, m.time);
     const stage = roundToStage(m.round);
-    const status: MatchStatus =
+    const status: string =
       new Date() > kickoffAt ? "FINISHED" : "UPCOMING";
 
     await prisma.match.create({
