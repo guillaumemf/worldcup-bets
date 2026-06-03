@@ -1,0 +1,115 @@
+// Prisma Schema — Application de paris sportifs · Coupe du Monde 2026
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─────────────────────────────────────────
+// Utilisateur (sans authentification)
+// ─────────────────────────────────────────
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  createdAt DateTime @default(now())
+
+  memberships  LeagueMember[]
+  bets         Bet[]
+  ownedLeagues League[]       @relation("LeagueOwner")
+}
+
+// ─────────────────────────────────────────
+// Ligue
+// ─────────────────────────────────────────
+model League {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique // code d'invitation ex: "AMIS2026"
+  createdAt DateTime @default(now())
+
+  ownerId String
+  owner   User   @relation("LeagueOwner", fields: [ownerId], references: [id])
+
+  members LeagueMember[]
+
+  // Règles de points (configurables à la création)
+  pointsExactScore    Int @default(3)
+  pointsCorrectWinner Int @default(1)
+  pointsCorrectDiff   Int @default(2)
+}
+
+model LeagueMember {
+  id       String @id @default(cuid())
+  userId   String
+  leagueId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  league League @relation(fields: [leagueId], references: [id])
+
+  joinedAt DateTime @default(now())
+
+  @@unique([userId, leagueId])
+}
+
+// ─────────────────────────────────────────
+// Match
+// ─────────────────────────────────────────
+model Match {
+  id        String   @id @default(cuid())
+  // Identifiant externe (football-data.org) pour la synchro des scores
+  externalId String? @unique
+
+  homeTeam String
+  awayTeam String
+
+  kickoffAt DateTime
+  stage     Stage    // phase de la compétition
+
+  homeScore Int? // null jusqu'à la fin du match
+  awayScore Int?
+
+  status MatchStatus @default(UPCOMING)
+
+  bets Bet[]
+}
+
+enum Stage {
+  GROUP
+  ROUND_OF_32
+  ROUND_OF_16
+  QUARTER_FINAL
+  SEMI_FINAL
+  THIRD_PLACE
+  FINAL
+}
+
+enum MatchStatus {
+  UPCOMING
+  LIVE
+  FINISHED
+}
+
+// ─────────────────────────────────────────
+// Pari
+// ─────────────────────────────────────────
+model Bet {
+  id      String @id @default(cuid())
+  userId  String
+  matchId String
+
+  predictedHome Int
+  predictedAway Int
+
+  points    Int?     // null tant que le match n'est pas terminé
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id])
+  match Match @relation(fields: [matchId], references: [id])
+
+  @@unique([userId, matchId]) // un seul pari par utilisateur par match
+}
