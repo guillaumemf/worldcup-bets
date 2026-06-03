@@ -1,13 +1,12 @@
 // Prisma Schema — Application de paris sportifs · Coupe du Monde 2026
 
 datasource db {
-  provider = "sqlite"
+  provider = "libsql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 // ─────────────────────────────────────────
