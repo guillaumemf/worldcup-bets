@@ -5,6 +5,8 @@ import { createClient } from "@libsql/client";
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
+  console.log("TURSO_AUTH_TOKEN present:", !!process.env.TURSO_AUTH_TOKEN);
+  console.log("DATABASE_URL:", process.env.DATABASE_URL?.substring(0, 20));
   // En production : Turso via libsql
   if (process.env.TURSO_AUTH_TOKEN) {
     const libsql = createClient({
