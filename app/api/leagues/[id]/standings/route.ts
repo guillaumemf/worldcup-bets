@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import type { LeagueMember, User, Bet } from "@prisma/client";
 
-type MemberWithBets = LeagueMember & {
-  user: User & { bets: Bet[] };
+type MemberWithBets = {
+  userId: string;
+  leagueId: string;
+  user: {
+    id: string;
+    username: string;
+    bets: { points: number | null }[];
+  };
 };
 
 // GET /api/leagues/[id]/standings — classement d'une ligue
