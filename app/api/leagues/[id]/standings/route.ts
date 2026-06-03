@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import type { LeagueMember, User, Bet } from "@prisma/client";
+
+type MemberWithBets = LeagueMember & {
+  user: User & { bets: Bet[] };
+};
 
 // GET /api/leagues/[id]/standings — classement d'une ligue
 export async function GET(
@@ -19,7 +24,7 @@ export async function GET(
     },
   });
 
-  const standings = members
+  const standings = (members as MemberWithBets[])
     .map((m) => {
       const bets = m.user.bets;
       const totalPoints = bets.reduce((sum, b) => sum + (b.points ?? 0), 0);
