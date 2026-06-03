@@ -13,7 +13,7 @@ export async function GET() {
   // Récupérer les matchs en cours ou à venir avec un externalId
   const matches = await prisma.match.findMany({
     where: {
-      status: { in: ["UPCOMING", "LIVE"] },
+      status: { in: ["UPCOMING", "LIVE"] as string[] },
       externalId: { not: null },
     },
   });

@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   if (!match) {
     return NextResponse.json({ error: "Match introuvable" }, { status: 404 });
   }
-  if (match.status !== "UPCOMING") {
+  if (match.status !== "UPCOMING") { // UPCOMING, LIVE, FINISHED
     return NextResponse.json(
       { error: "Les paris sont fermés pour ce match" },
       { status: 403 }

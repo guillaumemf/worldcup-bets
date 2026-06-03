@@ -67,30 +67,14 @@ model Match {
   awayTeam String
 
   kickoffAt DateTime
-  stage     Stage    // phase de la compétition
+  stage     String   @default("GROUP") // GROUP, ROUND_OF_32, ROUND_OF_16, QUARTER_FINAL, SEMI_FINAL, THIRD_PLACE, FINAL
 
   homeScore Int? // null jusqu'à la fin du match
   awayScore Int?
 
-  status MatchStatus @default(UPCOMING)
+  status String @default("UPCOMING") // UPCOMING, LIVE, FINISHED
 
   bets Bet[]
-}
-
-enum Stage {
-  GROUP
-  ROUND_OF_32
-  ROUND_OF_16
-  QUARTER_FINAL
-  SEMI_FINAL
-  THIRD_PLACE
-  FINAL
-}
-
-enum MatchStatus {
-  UPCOMING
-  LIVE
-  FINISHED
 }
 
 // ─────────────────────────────────────────

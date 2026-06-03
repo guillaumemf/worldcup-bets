@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const userId = req.nextUrl.searchParams.get("userId");
 
   const matches = await prisma.match.findMany({
-    where: { status: { in: ["UPCOMING", "LIVE"] } },
+    where: { status: { in: ["UPCOMING", "LIVE"] as string[] } },
     orderBy: { kickoffAt: "asc" },
     take: 20,
     include: userId

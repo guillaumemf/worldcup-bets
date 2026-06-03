@@ -1,4 +1,4 @@
-import { PrismaClient, Stage, MatchStatus } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -15,15 +15,15 @@ function parseKickoff(date: string, time: string): Date {
   return d;
 }
 
-function roundToStage(round: string): Stage {
-  if (round.startsWith("Matchday")) return Stage.GROUP;
-  if (round === "Round of 32") return Stage.ROUND_OF_32;
-  if (round === "Round of 16") return Stage.ROUND_OF_16;
-  if (round === "Quarter-final") return Stage.QUARTER_FINAL;
-  if (round === "Semi-final") return Stage.SEMI_FINAL;
-  if (round === "Match for third place") return Stage.THIRD_PLACE;
-  if (round === "Final") return Stage.FINAL;
-  return Stage.GROUP;
+function roundToStage(round: string): string {
+  if (round.startsWith("Matchday")) return "GROUP";
+  if (round === "Round of 32") return "ROUND_OF_32";
+  if (round === "Round of 16") return "ROUND_OF_16";
+  if (round === "Quarter-final") return "QUARTER_FINAL";
+  if (round === "Semi-final") return "SEMI_FINAL";
+  if (round === "Match for third place") return "THIRD_PLACE";
+  if (round === "Final") return "FINAL";
+  return "GROUP";
 }
 
 const matches = [
@@ -157,7 +157,7 @@ async function main() {
     const kickoffAt = parseKickoff(m.date, m.time);
     const stage = roundToStage(m.round);
     const status: MatchStatus =
-      new Date() > kickoffAt ? MatchStatus.FINISHED : MatchStatus.UPCOMING;
+      new Date() > kickoffAt ? "FINISHED" : "UPCOMING";
 
     await prisma.match.create({
       data: {
