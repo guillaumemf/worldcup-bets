@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 // POST /api/users — crée ou récupère un utilisateur par son nom
 export async function POST(req: NextRequest) {
   const { username } = await req.json();

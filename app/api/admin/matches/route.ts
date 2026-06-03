@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/admin/matches — tous les matchs (admin)
 export async function GET(req: NextRequest) {
   const adminPassword = req.headers.get("x-admin-password");

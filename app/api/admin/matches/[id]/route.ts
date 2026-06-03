@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculatePoints } from "@/lib/points";
 
+export const dynamic = "force-dynamic";
+
 // PATCH /api/admin/matches/[id] — mise à jour manuelle du score
 export async function PATCH(
   req: NextRequest,

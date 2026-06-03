@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculatePoints } from "@/lib/points";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/matches/sync — appelé par le cron Vercel
 // Met à jour les scores des matchs en cours/terminés via football-data.org
 export async function GET() {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 // POST /api/bets — soumettre ou mettre à jour un pari
 export async function POST(req: NextRequest) {
   const { userId, matchId, predictedHome, predictedAway } = await req.json();

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 // POST /api/leagues/join — rejoindre une ligue via son code
 export async function POST(req: NextRequest) {
   const { code, userId } = await req.json();

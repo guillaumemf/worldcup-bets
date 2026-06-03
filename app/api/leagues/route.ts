@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 function generateCode(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
