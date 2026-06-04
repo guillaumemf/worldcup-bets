@@ -151,7 +151,7 @@ export default function AdminPage() {
             placeholder="Mot de passe admin"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="border border-gray-600 rounded-lg px-4 py-3 bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
           />
           <button

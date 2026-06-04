@@ -141,7 +141,7 @@ export default function LeagueAdminPage() {
                     max={10}
                     value={value}
                     onChange={(e) => setter(Number(e.target.value))}
-                    className="w-16 text-center border border-gray-600 rounded-lg py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-16 text-center border border-gray-600 rounded-lg py-1.5 font-bold bg-gray-800 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                   <span className="text-sm text-gray-400">pts</span>
                 </div>

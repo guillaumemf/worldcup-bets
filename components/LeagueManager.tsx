@@ -93,7 +93,7 @@ export default function LeagueManager({
             value={leagueName}
             onChange={(e) => setLeagueName(e.target.value)}
             required
-            className="flex-1 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="flex-1 border border-gray-600 rounded-lg px-3 py-2 text-sm bg-gray-800 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             type="submit"
