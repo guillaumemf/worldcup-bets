@@ -15,16 +15,18 @@ type BetWithMatch = {
   match: Match;
 };
 
-const POINTS_LABEL: Record<number, { label: string; color: string }> = {
-  3: { label: "Score exact", color: "text-red-400 bg-red-950" },
-  2: { label: "Bonne diff.", color: "text-blue-700 bg-blue-100" },
-  1: { label: "Bon vainqueur", color: "text-yellow-700 bg-yellow-100" },
-  0: { label: "Raté", color: "text-red-600 bg-red-100" },
-};
+function getPointsBadge(points: number): { label: string; color: string } {
+  if (points > 3) return { label: `+${points} pts`, color: "text-green-400 bg-green-950" };
+  if (points === 3) return { label: "Score exact", color: "text-green-400 bg-green-950" };
+  if (points === 2) return { label: "Bonne diff.", color: "text-blue-400 bg-blue-950" };
+  if (points === 1) return { label: "Bon vainqueur", color: "text-yellow-400 bg-yellow-950" };
+  if (points === 0) return { label: "Raté", color: "text-gray-400 bg-gray-800" };
+  return { label: `${points} pts`, color: "text-red-400 bg-red-950" }; // négatif
+}
 
 export default function ResultCard({ bet }: { bet: BetWithMatch }) {
   const { match, predictedHome, predictedAway, points } = bet;
-  const badge = points !== null ? POINTS_LABEL[points] : null;
+  const badge = points !== null ? getPointsBadge(points) : null;
 
   const kickoff = new Date(match.kickoffAt);
 

@@ -156,7 +156,7 @@ export default function LeagueAdminPage() {
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
-                    min={0}
+                    min={-10}
                     max={10}
                     value={value}
                     onChange={(e) => setter(Number(e.target.value))}
