@@ -76,16 +76,16 @@ export default function Dashboard() {
     <div className="flex flex-col gap-8">
       {/* Header utilisateur */}
       <div className="flex items-center justify-between">
-        <p className="text-gray-500">
-          Bonjour, <span className="font-semibold text-gray-900">{username}</span> 👋
+        <p className="text-gray-400">
+          Bonjour, <span className="font-semibold text-gray-100">{username}</span> 👋
         </p>
         <div className="flex items-center gap-4">
-          <Link href="/results" className="text-sm text-green-700 font-medium hover:underline">
+          <Link href="/results" className="text-sm text-red-400 font-medium hover:underline">
             Mes résultats →
           </Link>
           <button
             onClick={() => { localStorage.clear(); router.push("/"); }}
-            className="text-sm text-gray-400 hover:text-gray-600"
+            className="text-sm text-gray-400 hover:text-gray-400"
           >
             Changer d'utilisateur
           </button>
@@ -105,8 +105,8 @@ export default function Dashboard() {
                   onClick={() => setSelectedLeague(l)}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
                     selectedLeague?.id === l.id
-                      ? "bg-green-700 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-red-700 text-white"
+                      : "bg-gray-800 text-gray-500 hover:bg-gray-700"
                   }`}
                 >
                   {l.name}
@@ -114,7 +114,7 @@ export default function Dashboard() {
                 {l.ownerId === userId && (
                   <Link
                     href={`/league/${l.id}/admin`}
-                    className="text-xs text-gray-400 hover:text-green-700 transition"
+                    className="text-xs text-gray-400 hover:text-red-400 transition"
                     title="Gérer la ligue"
                   >
                     ⚙️
@@ -131,7 +131,7 @@ export default function Dashboard() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold">Classement — {selectedLeague.name}</h2>
-            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded font-mono">
+            <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded font-mono">
               {selectedLeague.code}
             </span>
           </div>

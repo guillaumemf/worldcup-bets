@@ -21,10 +21,10 @@ export default function Standings({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200">
+    <div className="overflow-hidden rounded-xl border border-gray-700">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-gray-50 text-gray-500 text-xs uppercase">
+          <tr className="bg-gray-800 text-gray-400 text-xs uppercase">
             <th className="py-2 px-3 text-left w-8">#</th>
             <th className="py-2 px-3 text-left">Joueur</th>
             <th className="py-2 px-3 text-right">Pts</th>
@@ -35,19 +35,19 @@ export default function Standings({
           {standings.map((s) => (
             <tr
               key={s.userId}
-              className={`border-t border-gray-100 ${
-                s.userId === currentUserId ? "bg-green-50 font-semibold" : "bg-white"
+              className={`border-t border-gray-800 ${
+                s.userId === currentUserId ? "bg-red-950 font-semibold" : "bg-gray-900"
               }`}
             >
               <td className="py-2 px-3 text-gray-400">{s.rank}</td>
               <td className="py-2 px-3">
                 {s.username}
                 {s.userId === currentUserId && (
-                  <span className="ml-1 text-xs text-green-600">(toi)</span>
+                  <span className="ml-1 text-xs text-red-400">(toi)</span>
                 )}
               </td>
               <td className="py-2 px-3 text-right font-bold">{s.totalPoints}</td>
-              <td className="py-2 px-3 text-right text-gray-500">{s.exactScores}</td>
+              <td className="py-2 px-3 text-right text-gray-400">{s.exactScores}</td>
             </tr>
           ))}
         </tbody>

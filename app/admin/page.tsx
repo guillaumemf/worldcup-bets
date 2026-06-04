@@ -151,13 +151,13 @@ export default function AdminPage() {
             placeholder="Mot de passe admin"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="bg-green-700 text-white rounded-lg px-4 py-3 font-semibold hover:bg-green-800 disabled:opacity-40 transition"
+            className="bg-red-700 text-white rounded-lg px-4 py-3 font-semibold hover:bg-red-800 disabled:opacity-40 transition"
           >
             {loading ? "Connexion…" : "Accéder"}
           </button>
@@ -182,8 +182,8 @@ export default function AdminPage() {
             onClick={() => setFilterStage(s)}
             className={`px-3 py-1 rounded-full text-sm transition ${
               filterStage === s
-                ? "bg-green-700 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-red-700 text-white"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
             {s === "ALL" ? "Tous" : STAGE_LABELS[s] ?? s}
@@ -199,7 +199,7 @@ export default function AdminPage() {
           const kickoff = new Date(match.kickoffAt);
 
           return (
-            <div key={match.id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+            <div key={match.id} className="bg-gray-900 rounded-xl border border-gray-700 p-4 shadow-sm">
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <span className="text-xs text-gray-400">
@@ -215,7 +215,7 @@ export default function AdminPage() {
                 <select
                   value={edit.status}
                   onChange={(e) => updateEdit(match.id, "status", e.target.value)}
-                  className="text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-green-500"
+                  className="text-xs border border-gray-700 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-red-500"
                 >
                   {Object.entries(STATUS_LABELS).map(([v, l]) => (
                     <option key={v} value={v}>{l}</option>
@@ -232,7 +232,7 @@ export default function AdminPage() {
                     max={99}
                     value={edit.homeScore}
                     onChange={(e) => updateEdit(match.id, "homeScore", e.target.value)}
-                    className="w-12 text-center border border-gray-300 rounded-lg py-1.5 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-12 text-center border border-gray-600 rounded-lg py-1.5 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
                     placeholder="–"
                   />
                   <span className="text-gray-400 font-bold">–</span>
@@ -242,7 +242,7 @@ export default function AdminPage() {
                     max={99}
                     value={edit.awayScore}
                     onChange={(e) => updateEdit(match.id, "awayScore", e.target.value)}
-                    className="w-12 text-center border border-gray-300 rounded-lg py-1.5 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-12 text-center border border-gray-600 rounded-lg py-1.5 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
                     placeholder="–"
                   />
                 </div>
@@ -255,7 +255,7 @@ export default function AdminPage() {
                 <button
                   onClick={() => handleSave(match.id)}
                   disabled={edit.saving || edit.homeScore === "" || edit.awayScore === ""}
-                  className="text-sm px-4 py-1.5 bg-green-700 text-white rounded-lg hover:bg-green-800 disabled:opacity-40 transition"
+                  className="text-sm px-4 py-1.5 bg-red-700 text-white rounded-lg hover:bg-red-800 disabled:opacity-40 transition"
                 >
                   {edit.saving ? "Sauvegarde…" : edit.saved ? "✓ Sauvegardé" : "Enregistrer"}
                 </button>

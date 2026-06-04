@@ -62,7 +62,7 @@ export default function MatchCard({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+    <div className="bg-gray-900 rounded-xl border border-gray-700 p-4 shadow-sm">
       <div className="text-xs text-gray-400 mb-2 flex justify-between">
         <span>{STAGE_LABELS[match.stage] ?? match.stage}</span>
         <span>
@@ -87,7 +87,7 @@ export default function MatchCard({
             value={home}
             onChange={(e) => setHome(e.target.value)}
             disabled={locked}
-            className="w-12 text-center border border-gray-300 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100 disabled:text-gray-400"
+            className="w-12 text-center border border-gray-600 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-gray-800 disabled:text-gray-400"
           />
           <span className="text-gray-400 font-bold">–</span>
           <input
@@ -97,7 +97,7 @@ export default function MatchCard({
             value={away}
             onChange={(e) => setAway(e.target.value)}
             disabled={locked}
-            className="w-12 text-center border border-gray-300 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100 disabled:text-gray-400"
+            className="w-12 text-center border border-gray-600 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-gray-800 disabled:text-gray-400"
           />
         </div>
 
@@ -109,7 +109,7 @@ export default function MatchCard({
           <button
             onClick={handleSave}
             disabled={saving || home === "" || away === ""}
-            className="text-sm px-4 py-1.5 bg-green-700 text-white rounded-lg hover:bg-green-800 disabled:opacity-40 transition"
+            className="text-sm px-4 py-1.5 bg-red-700 text-white rounded-lg hover:bg-red-800 disabled:opacity-40 transition"
           >
             {saving ? "Enregistrement…" : saved ? "✓ Enregistré" : existingBet ? "Modifier" : "Parier"}
           </button>

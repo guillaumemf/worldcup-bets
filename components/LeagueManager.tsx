@@ -61,14 +61,14 @@ export default function LeagueManager({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+    <div className="bg-gray-900 rounded-xl border border-gray-700 p-4 shadow-sm">
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setTab("create")}
           className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition ${
             tab === "create"
-              ? "bg-green-700 text-white"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? "bg-red-700 text-white"
+              : "bg-gray-800 text-gray-400 hover:bg-gray-700"
           }`}
         >
           Créer une ligue
@@ -77,8 +77,8 @@ export default function LeagueManager({
           onClick={() => setTab("join")}
           className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition ${
             tab === "join"
-              ? "bg-green-700 text-white"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? "bg-red-700 text-white"
+              : "bg-gray-800 text-gray-400 hover:bg-gray-700"
           }`}
         >
           Rejoindre
@@ -93,12 +93,12 @@ export default function LeagueManager({
             value={leagueName}
             onChange={(e) => setLeagueName(e.target.value)}
             required
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="flex-1 border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             type="submit"
             disabled={loading}
-            className="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-800 disabled:opacity-40 transition"
+            className="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-800 disabled:opacity-40 transition"
           >
             Créer
           </button>
@@ -112,12 +112,12 @@ export default function LeagueManager({
             onChange={(e) => setJoinCode(e.target.value)}
             required
             maxLength={8}
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="flex-1 border border-gray-600 rounded-lg px-3 py-2 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             type="submit"
             disabled={loading}
-            className="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-800 disabled:opacity-40 transition"
+            className="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-800 disabled:opacity-40 transition"
           >
             Rejoindre
           </button>
@@ -125,7 +125,7 @@ export default function LeagueManager({
       )}
 
       {result && (
-        <p className="mt-3 text-sm text-center font-medium text-green-700">{result}</p>
+        <p className="mt-3 text-sm text-center font-medium text-red-400">{result}</p>
       )}
     </div>
   );

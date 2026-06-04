@@ -101,7 +101,7 @@ export default function LeagueAdminPage() {
     return (
       <div className="text-center py-12">
         <p className="text-red-500 font-medium">Tu n'es pas l'admin de cette ligue.</p>
-        <Link href="/dashboard" className="text-green-700 text-sm mt-4 block hover:underline">
+        <Link href="/dashboard" className="text-red-400 text-sm mt-4 block hover:underline">
           ← Retour au tableau de bord
         </Link>
       </div>
@@ -113,17 +113,17 @@ export default function LeagueAdminPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard" className="text-sm text-green-700 hover:underline">
+        <Link href="/dashboard" className="text-sm text-red-400 hover:underline">
           ← Tableau de bord
         </Link>
         <h2 className="text-lg font-bold">Admin — {league.name}</h2>
-        <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded font-mono ml-auto">
+        <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded font-mono ml-auto">
           {league.code}
         </span>
       </div>
 
       {/* Règles de points */}
-      <section className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <section className="bg-gray-900 rounded-xl border border-gray-700 p-5 shadow-sm">
         <h3 className="font-bold mb-4">Système de points</h3>
         <form onSubmit={handleSavePoints} className="flex flex-col gap-4">
           <div className="flex flex-col gap-3">
@@ -133,7 +133,7 @@ export default function LeagueAdminPage() {
               { label: "Bon vainqueur (ou nul correct)", value: correctWinner, setter: setCorrectWinner },
             ].map(({ label, value, setter }) => (
               <div key={label} className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">{label}</span>
+                <span className="text-sm text-gray-500">{label}</span>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
@@ -141,7 +141,7 @@ export default function LeagueAdminPage() {
                     max={10}
                     value={value}
                     onChange={(e) => setter(Number(e.target.value))}
-                    className="w-16 text-center border border-gray-300 rounded-lg py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-16 text-center border border-gray-600 rounded-lg py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                   <span className="text-sm text-gray-400">pts</span>
                 </div>
@@ -152,7 +152,7 @@ export default function LeagueAdminPage() {
           <button
             type="submit"
             disabled={saving}
-            className="bg-green-700 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-green-800 disabled:opacity-40 transition"
+            className="bg-red-700 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-red-800 disabled:opacity-40 transition"
           >
             {saving ? "Sauvegarde…" : saved ? "✓ Sauvegardé" : "Enregistrer"}
           </button>
@@ -160,8 +160,8 @@ export default function LeagueAdminPage() {
       </section>
 
       {/* Membres */}
-      <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-gray-100">
+      <section className="bg-gray-900 rounded-xl border border-gray-700 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-gray-800">
           <h3 className="font-bold">Membres ({league.members.length})</h3>
         </div>
         <div>
@@ -173,7 +173,7 @@ export default function LeagueAdminPage() {
               <div className="flex items-center gap-2">
                 <span className="font-medium text-sm">{m.user.username}</span>
                 {m.userId === league.ownerId && (
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-red-950 text-red-400 px-2 py-0.5 rounded-full">
                     admin
                   </span>
                 )}

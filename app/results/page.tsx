@@ -70,7 +70,7 @@ export default function ResultsPage() {
     <div className="flex flex-col gap-8">
       {/* Nav */}
       <div className="flex items-center gap-3">
-        <Link href="/dashboard" className="text-sm text-green-700 hover:underline">
+        <Link href="/dashboard" className="text-sm text-red-400 hover:underline">
           ← Tableau de bord
         </Link>
         <h2 className="text-lg font-bold">Mes résultats</h2>
@@ -79,17 +79,17 @@ export default function ResultsPage() {
       {/* Statistiques */}
       {!loading && bets.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
-            <p className="text-3xl font-bold text-green-700">{totalPoints}</p>
-            <p className="text-xs text-gray-500 mt-1">Points totaux</p>
+          <div className="bg-gray-900 rounded-xl border border-gray-700 p-4 text-center shadow-sm">
+            <p className="text-3xl font-bold text-red-400">{totalPoints}</p>
+            <p className="text-xs text-gray-400 mt-1">Points totaux</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
+          <div className="bg-gray-900 rounded-xl border border-gray-700 p-4 text-center shadow-sm">
             <p className="text-3xl font-bold">{exactScores}</p>
-            <p className="text-xs text-gray-500 mt-1">Scores exacts</p>
+            <p className="text-xs text-gray-400 mt-1">Scores exacts</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm">
+          <div className="bg-gray-900 rounded-xl border border-gray-700 p-4 text-center shadow-sm">
             <p className="text-3xl font-bold">{correctWinners}</p>
-            <p className="text-xs text-gray-500 mt-1">Bons résultats</p>
+            <p className="text-xs text-gray-400 mt-1">Bons résultats</p>
           </div>
         </div>
       )}
@@ -106,7 +106,7 @@ export default function ResultsPage() {
           .filter((stage) => byStage[stage])
           .map((stage) => (
             <section key={stage}>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">
                 {STAGE_LABELS[stage] ?? stage}
               </h3>
               <div className="flex flex-col gap-3">

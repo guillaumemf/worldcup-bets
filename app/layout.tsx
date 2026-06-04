@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Pronostics Coupe du Monde 2026",
+  title: "Matchguess Contest",
   description: "Fais tes pronostics avec tes amis",
 };
 
@@ -13,11 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="min-h-screen bg-gray-50 text-gray-900">
-        <header className="bg-green-700 text-white py-4 px-6 shadow">
+      <body className="min-h-screen bg-gray-950 text-gray-100">
+        <header className="bg-red-700 text-white py-4 px-6 shadow">
           <h1 className="text-xl font-bold tracking-tight">
-            ⚽ Pronostics CM 2026
+            Matchguess Contest
           </h1>
+          <p className="text-xs italic text-red-200 mt-0.5">by Rayure, 21Ch211</p>
         </header>
         <main className="max-w-2xl mx-auto px-4 py-8">{children}</main>
       </body>
