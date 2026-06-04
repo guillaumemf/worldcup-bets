@@ -1,7 +1,7 @@
 // Prisma Schema — Application de paris sportifs · Coupe du Monde 2026
 
 datasource db {
-  provider = "libsql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
