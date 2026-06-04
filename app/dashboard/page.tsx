@@ -7,7 +7,7 @@ import MatchCard from "@/components/MatchCard";
 import Standings from "@/components/Standings";
 import LeagueManager from "@/components/LeagueManager";
 
-type League = { id: string; name: string; code: string };
+type League = { id: string; name: string; code: string; ownerId: string };
 type Match = {
   id: string;
   homeTeam: string;
@@ -100,17 +100,27 @@ export default function Dashboard() {
         {leagues.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
             {leagues.map((l) => (
-              <button
-                key={l.id}
-                onClick={() => setSelectedLeague(l)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
-                  selectedLeague?.id === l.id
-                    ? "bg-green-700 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {l.name}
-              </button>
+              <div key={l.id} className="flex items-center gap-1">
+                <button
+                  onClick={() => setSelectedLeague(l)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
+                    selectedLeague?.id === l.id
+                      ? "bg-green-700 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {l.name}
+                </button>
+                {l.ownerId === userId && (
+                  <Link
+                    href={`/league/${l.id}/admin`}
+                    className="text-xs text-gray-400 hover:text-green-700 transition"
+                    title="Gérer la ligue"
+                  >
+                    ⚙️
+                  </Link>
+                )}
+              </div>
             ))}
           </div>
         )}
