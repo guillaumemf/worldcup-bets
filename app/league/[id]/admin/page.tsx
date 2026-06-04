@@ -36,6 +36,8 @@ export default function LeagueAdminPage() {
   const [correctWinner, setCorrectWinner] = useState(1);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [recalculating, setRecalculating] = useState(false);
+  const [recalcResult, setRecalcResult] = useState<string | null>(null);
 
   useEffect(() => {
     const uid = localStorage.getItem("userId");
@@ -75,6 +77,23 @@ export default function LeagueAdminPage() {
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  }
+
+  async function handleRecalculate() {
+    if (!confirm("Recalculer tous les points avec le barème actuel ?")) return;
+    setRecalculating(true);
+    setRecalcResult(null);
+
+    const res = await fetch(`/api/leagues/${id}/recalculate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ requesterId: userId }),
+    });
+
+    const data = await res.json();
+    setRecalculating(false);
+    setRecalcResult(res.ok ? `✓ ${data.updated} paris recalculés.` : "Erreur lors du recalcul.");
+    setTimeout(() => setRecalcResult(null), 4000);
   }
 
   async function handleRemoveMember(memberUserId: string, username: string) {
@@ -149,13 +168,26 @@ export default function LeagueAdminPage() {
             ))}
           </div>
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-red-700 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-red-800 disabled:opacity-40 transition"
-          >
-            {saving ? "Sauvegarde…" : saved ? "✓ Sauvegardé" : "Enregistrer"}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 bg-red-700 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-red-800 disabled:opacity-40 transition"
+            >
+              {saving ? "Sauvegarde…" : saved ? "✓ Sauvegardé" : "Enregistrer"}
+            </button>
+            <button
+              type="button"
+              onClick={handleRecalculate}
+              disabled={recalculating}
+              className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-gray-600 disabled:opacity-40 transition"
+            >
+              {recalculating ? "Recalcul…" : "Recalculer les points"}
+            </button>
+          </div>
+          {recalcResult && (
+            <p className="text-sm text-center text-green-400">{recalcResult}</p>
+          )}
         </form>
       </section>
 
