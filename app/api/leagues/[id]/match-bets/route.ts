@@ -34,8 +34,15 @@ export async function GET(
   const memberIds = Array.from(memberMap.keys());
 
   // Récupérer les matchs dans les statuts demandés
+  // OU les matchs UPCOMING dont le coup d'envoi est passé (verrouillés côté client)
+  const now = new Date();
   const matches = await prisma.match.findMany({
-    where: { status: { in: statusFilter } },
+    where: {
+      OR: [
+        { status: { in: statusFilter } },
+        { status: "UPCOMING", kickoffAt: { lte: now } },
+      ],
+    },
     orderBy: { kickoffAt: "desc" },
     include: {
       bets: {

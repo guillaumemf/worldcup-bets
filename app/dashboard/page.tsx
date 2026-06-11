@@ -83,6 +83,7 @@ export default function Dashboard() {
 
   const fetchLiveMatchBets = useCallback(async () => {
     if (!selectedLeague) return;
+    // On passe status=LIVE pour récupérer les LIVE + les UPCOMING dont le coup d'envoi est passé
     const res = await fetch(`/api/leagues/${selectedLeague.id}/match-bets?status=LIVE`);
     if (!res.ok) return;
     const data: MatchBets[] = await res.json();
@@ -186,7 +187,8 @@ export default function Dashboard() {
         ) : (
           <div className="flex flex-col gap-3">
             {matches.map((m) => {
-              const liveBets = m.status === "LIVE" ? liveMatchBets.get(m.id) : undefined;
+              const locked = new Date() >= new Date(m.kickoffAt) || m.status !== "UPCOMING";
+              const liveBets = locked ? liveMatchBets.get(m.id) : undefined;
               return (
                 <div key={m.id} className="bg-gray-900 rounded-xl border border-gray-700 shadow-sm overflow-hidden">
                   <MatchCard
