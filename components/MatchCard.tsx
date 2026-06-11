@@ -26,10 +26,12 @@ export default function MatchCard({
   match,
   userId,
   onBetSaved,
+  noBorder = false,
 }: {
   match: Match;
   userId: string;
   onBetSaved?: () => void;
+  noBorder?: boolean;
 }) {
   const existingBet = match.bets?.[0];
   const [home, setHome] = useState(existingBet?.predictedHome ?? "");
@@ -62,7 +64,7 @@ export default function MatchCard({
   }
 
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-700 p-4 shadow-sm">
+    <div className={`bg-gray-900 p-4 ${noBorder ? "" : "rounded-xl border border-gray-700 shadow-sm"}`}>
       <div className="text-xs text-gray-400 mb-2 flex justify-between">
         <span>{STAGE_LABELS[match.stage] ?? match.stage}</span>
         <span>
