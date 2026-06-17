@@ -1,0 +1,104 @@
+537327 | Mexico vs South Africa | 2026-06-11 | GROUP_STAGE
+537328 | South Korea vs Czechia | 2026-06-12 | GROUP_STAGE
+537333 | Canada vs Bosnia-Herzegovina | 2026-06-12 | GROUP_STAGE
+537345 | United States vs Paraguay | 2026-06-13 | GROUP_STAGE
+537334 | Qatar vs Switzerland | 2026-06-13 | GROUP_STAGE
+537339 | Brazil vs Morocco | 2026-06-13 | GROUP_STAGE
+537340 | Haiti vs Scotland | 2026-06-14 | GROUP_STAGE
+537346 | Australia vs Turkey | 2026-06-14 | GROUP_STAGE
+537351 | Germany vs Curaçao | 2026-06-14 | GROUP_STAGE
+537357 | Netherlands vs Japan | 2026-06-14 | GROUP_STAGE
+537352 | Ivory Coast vs Ecuador | 2026-06-14 | GROUP_STAGE
+537358 | Sweden vs Tunisia | 2026-06-15 | GROUP_STAGE
+537369 | Spain vs Cape Verde Islands | 2026-06-15 | GROUP_STAGE
+537363 | Belgium vs Egypt | 2026-06-15 | GROUP_STAGE
+537370 | Saudi Arabia vs Uruguay | 2026-06-15 | GROUP_STAGE
+537364 | Iran vs New Zealand | 2026-06-16 | GROUP_STAGE
+537391 | France vs Senegal | 2026-06-16 | GROUP_STAGE
+537392 | Iraq vs Norway | 2026-06-16 | GROUP_STAGE
+537397 | Argentina vs Algeria | 2026-06-17 | GROUP_STAGE
+537398 | Austria vs Jordan | 2026-06-17 | GROUP_STAGE
+537403 | Portugal vs Congo DR | 2026-06-17 | GROUP_STAGE
+537409 | England vs Croatia | 2026-06-17 | GROUP_STAGE
+537410 | Ghana vs Panama | 2026-06-17 | GROUP_STAGE
+537404 | Uzbekistan vs Colombia | 2026-06-18 | GROUP_STAGE
+537329 | Czechia vs South Africa | 2026-06-18 | GROUP_STAGE
+537335 | Switzerland vs Bosnia-Herzegovina | 2026-06-18 | GROUP_STAGE
+537336 | Canada vs Qatar | 2026-06-18 | GROUP_STAGE
+537330 | Mexico vs South Korea | 2026-06-19 | GROUP_STAGE
+537348 | United States vs Australia | 2026-06-19 | GROUP_STAGE
+537342 | Scotland vs Morocco | 2026-06-19 | GROUP_STAGE
+537341 | Brazil vs Haiti | 2026-06-20 | GROUP_STAGE
+537347 | Turkey vs Paraguay | 2026-06-20 | GROUP_STAGE
+537359 | Netherlands vs Sweden | 2026-06-20 | GROUP_STAGE
+537353 | Germany vs Ivory Coast | 2026-06-20 | GROUP_STAGE
+537354 | Ecuador vs Curaçao | 2026-06-21 | GROUP_STAGE
+537360 | Tunisia vs Japan | 2026-06-21 | GROUP_STAGE
+537371 | Spain vs Saudi Arabia | 2026-06-21 | GROUP_STAGE
+537365 | Belgium vs Iran | 2026-06-21 | GROUP_STAGE
+537372 | Uruguay vs Cape Verde Islands | 2026-06-21 | GROUP_STAGE
+537366 | New Zealand vs Egypt | 2026-06-22 | GROUP_STAGE
+537399 | Argentina vs Austria | 2026-06-22 | GROUP_STAGE
+537393 | France vs Iraq | 2026-06-22 | GROUP_STAGE
+537394 | Norway vs Senegal | 2026-06-23 | GROUP_STAGE
+537400 | Jordan vs Algeria | 2026-06-23 | GROUP_STAGE
+537405 | Portugal vs Uzbekistan | 2026-06-23 | GROUP_STAGE
+537411 | England vs Ghana | 2026-06-23 | GROUP_STAGE
+537412 | Panama vs Croatia | 2026-06-23 | GROUP_STAGE
+537406 | Colombia vs Congo DR | 2026-06-24 | GROUP_STAGE
+537337 | Switzerland vs Canada | 2026-06-24 | GROUP_STAGE
+537338 | Bosnia-Herzegovina vs Qatar | 2026-06-24 | GROUP_STAGE
+537344 | Morocco vs Haiti | 2026-06-24 | GROUP_STAGE
+537343 | Scotland vs Brazil | 2026-06-24 | GROUP_STAGE
+537331 | Czechia vs Mexico | 2026-06-25 | GROUP_STAGE
+537332 | South Africa vs South Korea | 2026-06-25 | GROUP_STAGE
+537355 | Ecuador vs Germany | 2026-06-25 | GROUP_STAGE
+537356 | Curaçao vs Ivory Coast | 2026-06-25 | GROUP_STAGE
+537361 | Tunisia vs Netherlands | 2026-06-25 | GROUP_STAGE
+537362 | Japan vs Sweden | 2026-06-25 | GROUP_STAGE
+537349 | Turkey vs United States | 2026-06-26 | GROUP_STAGE
+537350 | Paraguay vs Australia | 2026-06-26 | GROUP_STAGE
+537395 | Norway vs France | 2026-06-26 | GROUP_STAGE
+537396 | Senegal vs Iraq | 2026-06-26 | GROUP_STAGE
+537373 | Uruguay vs Spain | 2026-06-27 | GROUP_STAGE
+537374 | Cape Verde Islands vs Saudi Arabia | 2026-06-27 | GROUP_STAGE
+537367 | New Zealand vs Belgium | 2026-06-27 | GROUP_STAGE
+537368 | Egypt vs Iran | 2026-06-27 | GROUP_STAGE
+537413 | Panama vs England | 2026-06-27 | GROUP_STAGE
+537414 | Croatia vs Ghana | 2026-06-27 | GROUP_STAGE
+537407 | Colombia vs Portugal | 2026-06-27 | GROUP_STAGE
+537408 | Congo DR vs Uzbekistan | 2026-06-27 | GROUP_STAGE
+537401 | Jordan vs Argentina | 2026-06-28 | GROUP_STAGE
+537402 | Algeria vs Austria | 2026-06-28 | GROUP_STAGE
+537417 | TBD vs TBD | 2026-06-28 | LAST_32
+537423 | TBD vs TBD | 2026-06-29 | LAST_32
+537415 | TBD vs TBD | 2026-06-29 | LAST_32
+537418 | TBD vs TBD | 2026-06-30 | LAST_32
+537424 | TBD vs TBD | 2026-06-30 | LAST_32
+537416 | TBD vs TBD | 2026-06-30 | LAST_32
+537425 | TBD vs TBD | 2026-07-01 | LAST_32
+537426 | TBD vs TBD | 2026-07-01 | LAST_32
+537422 | TBD vs TBD | 2026-07-01 | LAST_32
+537421 | TBD vs TBD | 2026-07-02 | LAST_32
+537420 | TBD vs TBD | 2026-07-02 | LAST_32
+537419 | TBD vs TBD | 2026-07-02 | LAST_32
+537429 | TBD vs TBD | 2026-07-03 | LAST_32
+537428 | TBD vs TBD | 2026-07-03 | LAST_32
+537427 | TBD vs TBD | 2026-07-03 | LAST_32
+537430 | TBD vs TBD | 2026-07-04 | LAST_32
+537376 | TBD vs TBD | 2026-07-04 | LAST_16
+537375 | TBD vs TBD | 2026-07-04 | LAST_16
+537377 | TBD vs TBD | 2026-07-05 | LAST_16
+537378 | TBD vs TBD | 2026-07-06 | LAST_16
+537379 | TBD vs TBD | 2026-07-06 | LAST_16
+537380 | TBD vs TBD | 2026-07-07 | LAST_16
+537381 | TBD vs TBD | 2026-07-07 | LAST_16
+537382 | TBD vs TBD | 2026-07-07 | LAST_16
+537383 | TBD vs TBD | 2026-07-09 | QUARTER_FINALS
+537384 | TBD vs TBD | 2026-07-10 | QUARTER_FINALS
+537385 | TBD vs TBD | 2026-07-11 | QUARTER_FINALS
+537386 | TBD vs TBD | 2026-07-12 | QUARTER_FINALS
+537387 | TBD vs TBD | 2026-07-14 | SEMI_FINALS
+537388 | TBD vs TBD | 2026-07-15 | SEMI_FINALS
+537389 | TBD vs TBD | 2026-07-18 | THIRD_PLACE
+537390 | TBD vs TBD | 2026-07-19 | FINAL

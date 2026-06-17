@@ -4,7 +4,7 @@ import { calculatePoints } from "@/lib/points";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/matches/sync — appelé par le cron Vercel
+// GET /api/matches/sync — appelé par cron-job.org toutes les 5 minutes
 // Met à jour les scores des matchs en cours/terminés via football-data.org
 export async function GET() {
   const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
@@ -12,7 +12,7 @@ export async function GET() {
     return NextResponse.json({ error: "Clé API manquante" }, { status: 500 });
   }
 
-  // Récupérer les matchs en cours ou à venir avec un externalId
+  // Récupérer les matchs UPCOMING ou LIVE qui ont un externalId
   const matches = await prisma.match.findMany({
     where: {
       status: { in: ["UPCOMING", "LIVE"] as string[] },
@@ -24,7 +24,7 @@ export async function GET() {
     return NextResponse.json({ updated: 0 });
   }
 
-  // Appel football-data.org — Coupe du Monde 2026 (WC)
+  // Appel football-data.org avec tous les IDs en une seule requête
   const ids = matches.map((m) => m.externalId).join(",");
   const res = await fetch(
     `https://api.football-data.org/v4/matches?ids=${ids}`,
@@ -40,25 +40,36 @@ export async function GET() {
 
   for (const apiMatch of data.matches) {
     const isFinished = apiMatch.status === "FINISHED";
+    const isLive = apiMatch.status === "IN_PLAY" || apiMatch.status === "PAUSED";
     const homeScore = apiMatch.score?.fullTime?.home ?? null;
     const awayScore = apiMatch.score?.fullTime?.away ?? null;
 
+    // Trouver le match en DB par externalId pour récupérer son id interne
+    const dbMatch = matches.find((m) => m.externalId === String(apiMatch.id));
+    if (!dbMatch) continue;
+
+    // Mettre à jour le score et le statut
     await prisma.match.update({
-      where: { externalId: String(apiMatch.id) },
+      where: { id: dbMatch.id }, // ✅ id interne, pas externalId
       data: {
         homeScore,
         awayScore,
-        status: isFinished ? "FINISHED" : "LIVE",
+        status: isFinished ? "FINISHED" : isLive ? "LIVE" : "UPCOMING",
       },
     });
 
-    // Calculer les points de tous les paris sur ce match
+    // Calculer les points de tous les paris sur ce match (une seule fois)
     if (isFinished && homeScore !== null && awayScore !== null) {
       const bets = await prisma.bet.findMany({
-        where: { matchId: apiMatch.id.toString(), points: null },
+        where: {
+          matchId: dbMatch.id, // ✅ id interne, pas externalId
+          points: null,        // seulement les paris pas encore calculés
+        },
       });
 
       for (const bet of bets) {
+        // Récupérer les règles de la ligue du joueur
+        // (utilise les règles par défaut — le recalcul par ligue reste disponible via /recalculate)
         const points = calculatePoints(
           bet.predictedHome,
           bet.predictedAway,
@@ -72,5 +83,5 @@ export async function GET() {
     updated++;
   }
 
-  return NextResponse.json({ updated });
+  return NextResponse.json({ updated, total: matches.length });
 }
