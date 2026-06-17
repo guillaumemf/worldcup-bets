@@ -16,6 +16,8 @@ type Match = {
   kickoffAt: string;
   stage: string;
   status: string;
+  homeScore: number | null;
+  awayScore: number | null;
   bets?: { predictedHome: number; predictedAway: number }[];
 };
 type Standing = {
