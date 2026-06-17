@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const matches = await prisma.match.findMany({
     where: { status: { in: ["UPCOMING", "LIVE"] as string[] } },
     orderBy: { kickoffAt: "asc" },
-    take: 20,
+
     include: userId
       ? { bets: { where: { userId } } }
       : undefined,
