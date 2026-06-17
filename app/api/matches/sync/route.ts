@@ -6,7 +6,16 @@ export const dynamic = "force-dynamic";
 
 // GET /api/matches/sync — appelé par cron-job.org toutes les 5 minutes
 // Met à jour les scores des matchs en cours/terminés via football-data.org
-export async function GET() {
+export async function GET(req: Request) {
+  // Vérification du token secret pour éviter les appels non autorisés
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret) {
+    const token = new URL(req.url).searchParams.get("token");
+    if (token !== cronSecret) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+  }
+
   const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
   if (!API_KEY) {
     return NextResponse.json({ error: "Clé API manquante" }, { status: 500 });
