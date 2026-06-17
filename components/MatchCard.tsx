@@ -9,6 +9,8 @@ type Match = {
   kickoffAt: string;
   stage: string;
   status: string;
+  homeScore: number | null;
+  awayScore: number | null;
   bets?: { predictedHome: number; predictedAway: number }[];
 };
 
@@ -41,6 +43,7 @@ export default function MatchCard({
 
   const kickoff = new Date(match.kickoffAt);
   const locked = new Date() >= kickoff || match.status !== "UPCOMING";
+  const hasScore = match.homeScore !== null && match.awayScore !== null;
 
   async function handleSave() {
     if (home === "" || away === "") return;
@@ -82,25 +85,42 @@ export default function MatchCard({
         <span className="font-semibold text-right w-1/3">{match.homeTeam}</span>
 
         <div className="flex items-center gap-2">
-          <input
-            type="number"
-            min={0}
-            max={99}
-            value={home}
-            onChange={(e) => setHome(e.target.value)}
-            disabled={locked}
-            className="w-12 text-center border border-gray-600 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-gray-800 disabled:text-gray-400"
-          />
-          <span className="text-gray-400 font-bold">–</span>
-          <input
-            type="number"
-            min={0}
-            max={99}
-            value={away}
-            onChange={(e) => setAway(e.target.value)}
-            disabled={locked}
-            className="w-12 text-center border border-gray-600 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-gray-800 disabled:text-gray-400"
-          />
+          {locked && hasScore ? (
+            /* Score réel du match */
+            <>
+              <span className="w-12 text-center text-2xl font-bold">{match.homeScore}</span>
+              <span className="text-gray-400 font-bold">–</span>
+              <span className="w-12 text-center text-2xl font-bold">{match.awayScore}</span>
+            </>
+          ) : locked ? (
+            /* Match verrouillé mais pas encore de score */
+            <>
+              <span className="w-12 text-center text-lg font-bold text-gray-500">?</span>
+              <span className="text-gray-400 font-bold">–</span>
+              <span className="w-12 text-center text-lg font-bold text-gray-500">?</span>
+            </>
+          ) : (
+            /* Match ouvert — saisie du pari */
+            <>
+              <input
+                type="number"
+                min={0}
+                max={99}
+                value={home}
+                onChange={(e) => setHome(e.target.value)}
+                className="w-12 text-center border border-gray-600 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <span className="text-gray-400 font-bold">–</span>
+              <input
+                type="number"
+                min={0}
+                max={99}
+                value={away}
+                onChange={(e) => setAway(e.target.value)}
+                className="w-12 text-center border border-gray-600 rounded-lg py-1 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </>
+          )}
         </div>
 
         <span className="font-semibold text-left w-1/3">{match.awayTeam}</span>
