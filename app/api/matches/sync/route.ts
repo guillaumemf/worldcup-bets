@@ -5,9 +5,8 @@ import { calculatePoints } from "@/lib/points";
 export const dynamic = "force-dynamic";
 
 // GET /api/matches/sync — appelé par cron-job.org toutes les 5 minutes
-// Met à jour les scores des matchs en cours/terminés via football-data.org
 export async function GET(req: Request) {
-  // Vérification du token secret pour éviter les appels non autorisés
+  // Vérification du token secret
   const cronSecret = process.env.CRON_SECRET;
   if (cronSecret) {
     const token = new URL(req.url).searchParams.get("token");
@@ -21,7 +20,6 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Clé API manquante" }, { status: 500 });
   }
 
-  // Récupérer les matchs UPCOMING ou LIVE qui ont un externalId
   const matches = await prisma.match.findMany({
     where: {
       status: { in: ["UPCOMING", "LIVE"] as string[] },
@@ -29,11 +27,8 @@ export async function GET(req: Request) {
     },
   });
 
-  if (matches.length === 0) {
-    return NextResponse.json({ updated: 0 });
-  }
+  if (matches.length === 0) return NextResponse.json({ updated: 0 });
 
-  // Appel football-data.org avec tous les IDs en une seule requête
   const ids = matches.map((m) => m.externalId).join(",");
   const res = await fetch(
     `https://api.football-data.org/v4/matches?ids=${ids}`,
@@ -46,6 +41,7 @@ export async function GET(req: Request) {
 
   const data = await res.json();
   let updated = 0;
+  const finishedMatchIds: string[] = [];
 
   for (const apiMatch of data.matches) {
     const isFinished = apiMatch.status === "FINISHED";
@@ -53,13 +49,11 @@ export async function GET(req: Request) {
     const homeScore = apiMatch.score?.fullTime?.home ?? null;
     const awayScore = apiMatch.score?.fullTime?.away ?? null;
 
-    // Trouver le match en DB par externalId pour récupérer son id interne
     const dbMatch = matches.find((m) => m.externalId === String(apiMatch.id));
     if (!dbMatch) continue;
 
-    // Mettre à jour le score et le statut
     await prisma.match.update({
-      where: { id: dbMatch.id }, // ✅ id interne, pas externalId
+      where: { id: dbMatch.id },
       data: {
         homeScore,
         awayScore,
@@ -67,30 +61,50 @@ export async function GET(req: Request) {
       },
     });
 
-    // Calculer les points de tous les paris sur ce match (une seule fois)
     if (isFinished && homeScore !== null && awayScore !== null) {
-      const bets = await prisma.bet.findMany({
-        where: {
-          matchId: dbMatch.id, // ✅ id interne, pas externalId
-          points: null,        // seulement les paris pas encore calculés
-        },
-      });
-
-      for (const bet of bets) {
-        // Récupérer les règles de la ligue du joueur
-        // (utilise les règles par défaut — le recalcul par ligue reste disponible via /recalculate)
-        const points = calculatePoints(
-          bet.predictedHome,
-          bet.predictedAway,
-          homeScore,
-          awayScore
-        );
-        await prisma.bet.update({ where: { id: bet.id }, data: { points } });
-      }
+      finishedMatchIds.push(dbMatch.id);
     }
 
     updated++;
   }
 
-  return NextResponse.json({ updated, total: matches.length });
+  // Pour chaque match terminé, recalculer les points avec les règles de CHAQUE ligue
+  let betsUpdated = 0;
+  if (finishedMatchIds.length > 0) {
+    const leagues = await prisma.league.findMany({
+      include: { members: true },
+    });
+
+    for (const matchId of finishedMatchIds) {
+      const match = await prisma.match.findUnique({ where: { id: matchId } });
+      if (!match || match.homeScore === null || match.awayScore === null) continue;
+
+      for (const league of leagues) {
+        const memberIds = league.members.map((m) => m.userId);
+        const rules = {
+          exactScore: league.pointsExactScore,
+          correctDiff: league.pointsCorrectDiff,
+          correctWinner: league.pointsCorrectWinner,
+        };
+
+        const bets = await prisma.bet.findMany({
+          where: { matchId, userId: { in: memberIds } },
+        });
+
+        for (const bet of bets) {
+          const points = calculatePoints(
+            bet.predictedHome,
+            bet.predictedAway,
+            match.homeScore,
+            match.awayScore,
+            rules
+          );
+          await prisma.bet.update({ where: { id: bet.id }, data: { points } });
+          betsUpdated++;
+        }
+      }
+    }
+  }
+
+  return NextResponse.json({ updated, betsUpdated, total: matches.length });
 }
