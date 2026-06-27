@@ -106,7 +106,7 @@ export default function PointsChart({ users, data, currentUserId }: Props) {
         {/* Labels X : dates (max ~10 pour éviter l'encombrement) */}
         {data.map((d, i) => {
           const step = Math.ceil(data.length / 10);
-          if (i % step !== 0 && i !== data.length - 1) return null;
+          if (i % step !== 0) return null;
           const date = new Date(d.kickoffAt);
           const label = date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
           return (
