@@ -52,12 +52,17 @@ export async function GET(req: Request) {
     const dbMatch = matches.find((m) => m.externalId === String(apiMatch.id));
     if (!dbMatch) continue;
 
+    // Met à jour score, statut, et noms d'équipes si devenus connus (phase finale)
+    const homeTeamName = apiMatch.homeTeam?.name;
+    const awayTeamName = apiMatch.awayTeam?.name;
     await prisma.match.update({
       where: { id: dbMatch.id },
       data: {
         homeScore,
         awayScore,
         status: isFinished ? "FINISHED" : isLive ? "LIVE" : "UPCOMING",
+        ...(homeTeamName && homeTeamName !== "TBD" ? { homeTeam: homeTeamName } : {}),
+        ...(awayTeamName && awayTeamName !== "TBD" ? { awayTeam: awayTeamName } : {}),
       },
     });
 

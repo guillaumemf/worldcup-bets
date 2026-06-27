@@ -1,6 +1,7 @@
 /**
  * Script de mapping des externalId football-data.org
  * Appelle l'API une fois, croise avec notre DB, et remplit les externalId.
+ * Gère aussi les matchs de phase finale (TBD) en matchant par timestamp exact.
  *
  * Usage : npm run db:map-ids
  */
@@ -10,18 +11,16 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY!;
 
-// Normalise un nom d'équipe pour la comparaison (minuscules, sans accents, sans tirets)
 function normalize(name: string): string {
   return name
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/[-_'\.]/g, " ")
+    .replace(/[-_'.]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-// Quelques alias connus entre notre seed et football-data.org
 const ALIASES: Record<string, string> = {
   "united states": "usa",
   "dr congo": "congo dr",
@@ -40,6 +39,11 @@ function resolveAlias(name: string): string {
   return ALIASES[n] ?? n;
 }
 
+// Vérifie si un nom d'équipe est un placeholder (pas encore connu)
+function isPlaceholder(name: string): boolean {
+  return /^(TBD|tbd|[0-9][A-Z]|1[A-Z]|2[A-Z]|QF|SF|Vainqueur|Perdant|qualifié)/i.test(name.trim());
+}
+
 async function main() {
   if (!API_KEY) {
     console.error("❌ FOOTBALL_DATA_API_KEY manquante dans .env");
@@ -54,48 +58,59 @@ async function main() {
 
   if (!res.ok) {
     console.error(`❌ Erreur API: ${res.status} ${res.statusText}`);
-    const text = await res.text();
-    console.error(text);
+    console.error(await res.text());
     process.exit(1);
   }
 
   const data = await res.json();
   const apiMatches = data.matches as Array<{
     id: number;
-    homeTeam: { name: string; shortName: string };
-    awayTeam: { name: string; shortName: string };
+    homeTeam: { name: string };
+    awayTeam: { name: string };
     utcDate: string;
     status: string;
+    stage: string;
   }>;
 
   console.log(`✅ ${apiMatches.length} matchs récupérés depuis l'API`);
 
   const dbMatches = await prisma.match.findMany();
-  console.log(`📦 ${dbMatches.length} matchs en base`);
+  console.log(`📦 ${dbMatches.length} matchs en base\n`);
 
   let matched = 0;
   let skipped = 0;
   const unmatched: string[] = [];
 
   for (const apiMatch of apiMatches) {
-    const apiHome = resolveAlias(apiMatch.homeTeam.name);
-    const apiAway = resolveAlias(apiMatch.awayTeam.name);
-    const apiDate = new Date(apiMatch.utcDate);
+    const apiTime = new Date(apiMatch.utcDate).getTime();
+    const apiHome = resolveAlias(apiMatch.homeTeam?.name ?? "");
+    const apiAway = resolveAlias(apiMatch.awayTeam?.name ?? "");
+    const apiIsKnockout = apiMatch.homeTeam?.name === null || apiMatch.homeTeam?.name === "TBD" || apiMatch.homeTeam?.name === undefined;
 
-    // Cherche le match en DB par équipes normalisées + même jour
-    const found = dbMatches.find((m) => {
-      const dbHome = resolveAlias(m.homeTeam);
-      const dbAway = resolveAlias(m.awayTeam);
-      const dbDate = new Date(m.kickoffAt);
-
-      const sameTeams = dbHome === apiHome && dbAway === apiAway;
-      const sameDay =
-        dbDate.getUTCFullYear() === apiDate.getUTCFullYear() &&
-        dbDate.getUTCMonth() === apiDate.getUTCMonth() &&
-        dbDate.getUTCDate() === apiDate.getUTCDate();
-
-      return sameTeams && sameDay;
+    let found = dbMatches.find((m) => {
+      // Stratégie 1 : match par noms d'équipes + même jour (phase de groupes)
+      if (!isPlaceholder(m.homeTeam) && !apiIsKnockout) {
+        const dbHome = resolveAlias(m.homeTeam);
+        const dbAway = resolveAlias(m.awayTeam);
+        const dbDate = new Date(m.kickoffAt);
+        const apiDate = new Date(apiMatch.utcDate);
+        const sameDay =
+          dbDate.getUTCFullYear() === apiDate.getUTCFullYear() &&
+          dbDate.getUTCMonth() === apiDate.getUTCMonth() &&
+          dbDate.getUTCDate() === apiDate.getUTCDate();
+        return dbHome === apiHome && dbAway === apiAway && sameDay;
+      }
+      return false;
     });
+
+    // Stratégie 2 : match par timestamp exact (phase finale, équipes TBD)
+    if (!found && apiIsKnockout) {
+      found = dbMatches.find((m) => {
+        if (!isPlaceholder(m.homeTeam)) return false; // ne pas écraser les matchs déjà identifiés
+        const dbTime = new Date(m.kickoffAt).getTime();
+        return Math.abs(dbTime - apiTime) < 60 * 1000; // tolérance 1 minute
+      });
+    }
 
     if (found) {
       if (found.externalId === String(apiMatch.id)) {
@@ -106,13 +121,11 @@ async function main() {
         where: { id: found.id },
         data: { externalId: String(apiMatch.id) },
       });
-      console.log(
-        `  ✓ ${found.homeTeam} - ${found.awayTeam} → externalId=${apiMatch.id}`
-      );
+      console.log(`  ✓ [${apiMatch.stage}] ${found.homeTeam} vs ${found.awayTeam} → externalId=${apiMatch.id}`);
       matched++;
     } else {
       unmatched.push(
-        `  ✗ API: "${apiMatch.homeTeam.name}" - "${apiMatch.awayTeam.name}" (${apiMatch.utcDate.slice(0, 10)})`
+        `  ✗ [${apiMatch.stage}] "${apiMatch.homeTeam?.name ?? "TBD"}" vs "${apiMatch.awayTeam?.name ?? "TBD"}" (${apiMatch.utcDate})`
       );
     }
   }
@@ -123,11 +136,8 @@ async function main() {
   console.log(`  ${unmatched.length} non trouvés en DB`);
 
   if (unmatched.length > 0) {
-    console.log(`\n⚠️  Matchs API sans correspondance en DB :`);
+    console.log(`\n⚠️  Non trouvés :`);
     unmatched.forEach((m) => console.log(m));
-    console.log(
-      "\nPour ces matchs, vérifie les noms d'équipes dans le seed et ajoute un alias dans ALIASES si besoin."
-    );
   }
 }
 
