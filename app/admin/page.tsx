@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const STAGE_LABELS: Record<string, string> = {
   GROUP: "Groupes",
-  ROUND_OF_32: "32es",
+  ROUND_OF_32: "16es",
   ROUND_OF_16: "8es",
   QUARTER_FINAL: "Quarts",
   SEMI_FINAL: "Demis",

@@ -24,8 +24,8 @@ type BetWithMatch = {
 
 const STAGE_LABELS: Record<string, string> = {
   GROUP: "Phase de groupes",
-  ROUND_OF_32: "32èmes de finale",
-  ROUND_OF_16: "8èmes de finale",
+  ROUND_OF_32: "16èmes de finale",
+  ROUND_OF_16: "Huitièmes de finale",
   QUARTER_FINAL: "Quarts de finale",
   SEMI_FINAL: "Demi-finales",
   THIRD_PLACE: "Petite finale",
