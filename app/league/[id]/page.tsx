@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import Standings from "@/components/Standings";
 import LeagueBetsPanel from "@/components/LeagueBetsPanel";
+import PointsChart from "@/components/PointsChart";
 
 const STAGE_LABELS: Record<string, string> = {
   GROUP: "Phase de groupes",
@@ -65,6 +66,8 @@ export default function LeaguePage() {
   const [league, setLeague] = useState<League | null>(null);
   const [standings, setStandings] = useState<Standing[]>([]);
   const [matchBets, setMatchBets] = useState<MatchWithBets[]>([]);
+  const [chartUsers, setChartUsers] = useState<{ userId: string; username: string }[]>([]);
+  const [chartData, setChartData] = useState<{ label: string; kickoffAt: string; points: Record<string, number> }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,19 +78,25 @@ export default function LeaguePage() {
 
   const fetchAll = useCallback(async () => {
     if (!id) return;
-    const [leagueRes, standingsRes, matchBetsRes] = await Promise.all([
+    const [leagueRes, standingsRes, matchBetsRes, historyRes] = await Promise.all([
       fetch(`/api/leagues/${id}`),
       fetch(`/api/leagues/${id}/standings`),
       fetch(`/api/leagues/${id}/match-bets?status=LIVE,FINISHED`),
+      fetch(`/api/leagues/${id}/points-history`),
     ]);
-    const [leagueData, standingsData, matchBetsData] = await Promise.all([
+    const [leagueData, standingsData, matchBetsData, historyData] = await Promise.all([
       leagueRes.json(),
       standingsRes.json(),
       matchBetsRes.json(),
+      historyRes.json(),
     ]);
     setLeague(leagueData);
     setStandings(standingsData);
     setMatchBets(matchBetsData);
+    if (historyData.users && historyData.data) {
+      setChartUsers(historyData.users);
+      setChartData(historyData.data);
+    }
     setLoading(false);
   }, [id]);
 
@@ -146,6 +155,20 @@ export default function LeaguePage() {
         <h3 className="text-base font-bold mb-3">Classement</h3>
         <Standings standings={standings} currentUserId={userId} />
       </section>
+
+      {/* Graphe d'évolution */}
+      {chartData.length > 0 && (
+        <section>
+          <h3 className="text-base font-bold mb-3">Évolution des points</h3>
+          <div className="bg-gray-900 rounded-xl border border-gray-700 p-4">
+            <PointsChart
+              users={chartUsers}
+              data={chartData}
+              currentUserId={userId}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Historique des matchs */}
       <section>
