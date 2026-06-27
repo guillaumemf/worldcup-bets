@@ -103,10 +103,12 @@ export default function PointsChart({ users, data, currentUserId }: Props) {
           </g>
         ))}
 
-        {/* Labels X (max 10 pour éviter l'encombrement) */}
+        {/* Labels X : dates (max ~10 pour éviter l'encombrement) */}
         {data.map((d, i) => {
           const step = Math.ceil(data.length / 10);
           if (i % step !== 0 && i !== data.length - 1) return null;
+          const date = new Date(d.kickoffAt);
+          const label = date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
           return (
             <text
               key={i}
@@ -116,7 +118,7 @@ export default function PointsChart({ users, data, currentUserId }: Props) {
               fontSize={9}
               fill="#6b7280"
             >
-              {d.label}
+              {label}
             </text>
           );
         })}
