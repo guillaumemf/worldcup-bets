@@ -18,6 +18,10 @@ const STATUS_LABELS: Record<string, string> = {
   FINISHED: "Terminé",
 };
 
+const KNOCKOUT_STAGES = new Set([
+  "ROUND_OF_32", "ROUND_OF_16", "QUARTER_FINAL", "SEMI_FINAL", "THIRD_PLACE", "FINAL",
+]);
+
 type Match = {
   id: string;
   homeTeam: string;
@@ -27,12 +31,18 @@ type Match = {
   status: string;
   homeScore: number | null;
   awayScore: number | null;
+  aetHomeScore: number | null;
+  aetAwayScore: number | null;
+  penaltyWinner: string | null;
   _count: { bets: number };
 };
 
 type EditState = {
   homeScore: string;
   awayScore: string;
+  aetHomeScore: string;
+  aetAwayScore: string;
+  penaltyWinner: string;
   status: string;
   saving: boolean;
   saved: boolean;
@@ -67,6 +77,9 @@ export default function AdminPage() {
         initialEdits[m.id] = {
           homeScore: m.homeScore?.toString() ?? "",
           awayScore: m.awayScore?.toString() ?? "",
+          aetHomeScore: m.aetHomeScore?.toString() ?? "",
+          aetAwayScore: m.aetAwayScore?.toString() ?? "",
+          penaltyWinner: m.penaltyWinner ?? "",
           status: m.status,
           saving: false,
           saved: false,
@@ -100,6 +113,9 @@ export default function AdminPage() {
         homeScore: Number(edit.homeScore),
         awayScore: Number(edit.awayScore),
         status: edit.status,
+        aetHomeScore: edit.aetHomeScore !== "" ? Number(edit.aetHomeScore) : null,
+        aetAwayScore: edit.aetAwayScore !== "" ? Number(edit.aetAwayScore) : null,
+        penaltyWinner: edit.penaltyWinner || null,
       }),
     });
 
@@ -227,20 +243,14 @@ export default function AdminPage() {
                 <span className="flex-1 font-semibold text-right text-sm">{match.homeTeam}</span>
                 <div className="flex items-center gap-1.5">
                   <input
-                    type="number"
-                    min={0}
-                    max={99}
-                    value={edit.homeScore}
+                    type="number" min={0} max={99} value={edit.homeScore}
                     onChange={(e) => updateEdit(match.id, "homeScore", e.target.value)}
                     className="w-12 text-center border border-gray-600 rounded-lg py-1.5 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
                     placeholder="–"
                   />
                   <span className="text-gray-400 font-bold">–</span>
                   <input
-                    type="number"
-                    min={0}
-                    max={99}
-                    value={edit.awayScore}
+                    type="number" min={0} max={99} value={edit.awayScore}
                     onChange={(e) => updateEdit(match.id, "awayScore", e.target.value)}
                     className="w-12 text-center border border-gray-600 rounded-lg py-1.5 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
                     placeholder="–"
@@ -248,6 +258,40 @@ export default function AdminPage() {
                 </div>
                 <span className="flex-1 font-semibold text-left text-sm">{match.awayTeam}</span>
               </div>
+
+              {/* Champs AET + TAB pour les matchs éliminatoires */}
+              {KNOCKOUT_STAGES.has(match.stage) && (
+                <div className="mt-3 pt-3 border-t border-gray-800 flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400 w-24">Prolong. :</span>
+                    <input
+                      type="number" min={0} max={99} value={edit.aetHomeScore}
+                      onChange={(e) => updateEdit(match.id, "aetHomeScore", e.target.value)}
+                      className="w-12 text-center border border-gray-600 rounded-lg py-1 text-sm font-bold focus:outline-none focus:ring-1 focus:ring-red-500"
+                      placeholder="–"
+                    />
+                    <span className="text-gray-500">–</span>
+                    <input
+                      type="number" min={0} max={99} value={edit.aetAwayScore}
+                      onChange={(e) => updateEdit(match.id, "aetAwayScore", e.target.value)}
+                      className="w-12 text-center border border-gray-600 rounded-lg py-1 text-sm font-bold focus:outline-none focus:ring-1 focus:ring-red-500"
+                      placeholder="–"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400 w-24">TAB :</span>
+                    <select
+                      value={edit.penaltyWinner}
+                      onChange={(e) => updateEdit(match.id, "penaltyWinner", e.target.value)}
+                      className="text-xs border border-gray-600 rounded px-2 py-1 bg-gray-800 text-gray-200 focus:outline-none focus:ring-1 focus:ring-red-500"
+                    >
+                      <option value="">— aucun —</option>
+                      <option value="home">{match.homeTeam}</option>
+                      <option value="away">{match.awayTeam}</option>
+                    </select>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-3 flex justify-between items-center">
                 {edit.error && <p className="text-red-500 text-xs">{edit.error}</p>}

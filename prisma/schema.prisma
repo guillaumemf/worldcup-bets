@@ -36,10 +36,17 @@ model League {
 
   members LeagueMember[]
 
-  // Règles de points (configurables à la création)
+  // Règles de points — phase de groupes (configurables)
   pointsExactScore    Int @default(3)
   pointsCorrectWinner Int @default(1)
   pointsCorrectDiff   Int @default(2)
+
+  // Règles de points — phase éliminatoire (configurables)
+  knockoutPointsExactScore     Int @default(4)
+  knockoutPointsCorrectOutcome Int @default(2)
+  knockoutPointsETBonus        Int @default(1)
+  knockoutPointsETExact        Int @default(2)
+  knockoutPointsTABBonus       Int @default(1)
 }
 
 model LeagueMember {
@@ -72,6 +79,11 @@ model Match {
   homeScore Int? // null jusqu'à la fin du match
   awayScore Int?
 
+  // Phase éliminatoire — résultats après prolongations et/ou TAB
+  aetHomeScore  Int?    // score après prolongations (null si pas de prolong.)
+  aetAwayScore  Int?
+  penaltyWinner String? // "home" | "away" | null
+
   status String @default("UPCOMING") // UPCOMING, LIVE, FINISHED
 
   bets Bet[]
@@ -87,6 +99,11 @@ model Bet {
 
   predictedHome Int
   predictedAway Int
+
+  // Phase éliminatoire — prédictions prolongations et TAB (remplies si prédit nul à 90 min)
+  predictedETHome        Int?
+  predictedETAway        Int?
+  predictedPenaltyWinner String? // "home" | "away" | null
 
   points    Int?     // null tant que le match n'est pas terminé
   createdAt DateTime @default(now())

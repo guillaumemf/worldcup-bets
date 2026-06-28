@@ -27,8 +27,17 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { pointsExactScore, pointsCorrectWinner, pointsCorrectDiff, requesterId } =
-    await req.json();
+  const {
+    pointsExactScore,
+    pointsCorrectWinner,
+    pointsCorrectDiff,
+    knockoutPointsExactScore,
+    knockoutPointsCorrectOutcome,
+    knockoutPointsETBonus,
+    knockoutPointsETExact,
+    knockoutPointsTABBonus,
+    requesterId,
+  } = await req.json();
 
   // Vérifier que le demandeur est bien l'admin
   const league = await prisma.league.findUnique({ where: { id: params.id } });
@@ -41,7 +50,16 @@ export async function PATCH(
 
   const updated = await prisma.league.update({
     where: { id: params.id },
-    data: { pointsExactScore, pointsCorrectWinner, pointsCorrectDiff },
+    data: {
+      ...(pointsExactScore !== undefined && { pointsExactScore }),
+      ...(pointsCorrectWinner !== undefined && { pointsCorrectWinner }),
+      ...(pointsCorrectDiff !== undefined && { pointsCorrectDiff }),
+      ...(knockoutPointsExactScore !== undefined && { knockoutPointsExactScore }),
+      ...(knockoutPointsCorrectOutcome !== undefined && { knockoutPointsCorrectOutcome }),
+      ...(knockoutPointsETBonus !== undefined && { knockoutPointsETBonus }),
+      ...(knockoutPointsETExact !== undefined && { knockoutPointsETExact }),
+      ...(knockoutPointsTABBonus !== undefined && { knockoutPointsTABBonus }),
+    },
   });
 
   return NextResponse.json(updated);
@@ -54,7 +72,6 @@ export async function DELETE(
 ) {
   const { memberUserId, requesterId } = await req.json();
 
-  // Vérifier que le demandeur est l'admin
   const league = await prisma.league.findUnique({ where: { id: params.id } });
   if (!league) {
     return NextResponse.json({ error: "Ligue introuvable" }, { status: 404 });

@@ -18,6 +18,11 @@ type League = {
   pointsExactScore: number;
   pointsCorrectWinner: number;
   pointsCorrectDiff: number;
+  knockoutPointsExactScore: number;
+  knockoutPointsCorrectOutcome: number;
+  knockoutPointsETBonus: number;
+  knockoutPointsETExact: number;
+  knockoutPointsTABBonus: number;
   members: Member[];
 };
 
@@ -30,10 +35,16 @@ export default function LeagueAdminPage() {
   const [loading, setLoading] = useState(true);
   const [notAdmin, setNotAdmin] = useState(false);
 
-  // Règles de points
+  // Règles de points — groupes
   const [exactScore, setExactScore] = useState(3);
   const [correctDiff, setCorrectDiff] = useState(2);
   const [correctWinner, setCorrectWinner] = useState(1);
+  // Règles de points — knockout
+  const [koExactScore, setKoExactScore] = useState(4);
+  const [koCorrectOutcome, setKoCorrectOutcome] = useState(2);
+  const [koETBonus, setKoETBonus] = useState(1);
+  const [koETExact, setKoETExact] = useState(2);
+  const [koTABBonus, setKoTABBonus] = useState(1);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [recalculating, setRecalculating] = useState(false);
@@ -54,6 +65,11 @@ export default function LeagueAdminPage() {
           setExactScore(data.pointsExactScore);
           setCorrectDiff(data.pointsCorrectDiff);
           setCorrectWinner(data.pointsCorrectWinner);
+          setKoExactScore(data.knockoutPointsExactScore);
+          setKoCorrectOutcome(data.knockoutPointsCorrectOutcome);
+          setKoETBonus(data.knockoutPointsETBonus);
+          setKoETExact(data.knockoutPointsETExact);
+          setKoTABBonus(data.knockoutPointsTABBonus);
         }
         setLoading(false);
       });
@@ -71,6 +87,11 @@ export default function LeagueAdminPage() {
         pointsExactScore: exactScore,
         pointsCorrectDiff: correctDiff,
         pointsCorrectWinner: correctWinner,
+        knockoutPointsExactScore: koExactScore,
+        knockoutPointsCorrectOutcome: koCorrectOutcome,
+        knockoutPointsETBonus: koETBonus,
+        knockoutPointsETExact: koETExact,
+        knockoutPointsTABBonus: koTABBonus,
       }),
     });
 
@@ -144,42 +165,67 @@ export default function LeagueAdminPage() {
       {/* Règles de points */}
       <section className="bg-gray-900 rounded-xl border border-gray-700 p-5 shadow-sm">
         <h3 className="font-bold mb-4">Système de points</h3>
-        <form onSubmit={handleSavePoints} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
-            {[
-              { label: "Score exact", value: exactScore, setter: setExactScore },
-              { label: "Bon vainqueur + bonne différence", value: correctDiff, setter: setCorrectDiff },
-              { label: "Bon vainqueur (ou nul correct)", value: correctWinner, setter: setCorrectWinner },
-            ].map(({ label, value, setter }) => (
-              <div key={label} className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">{label}</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={-10}
-                    max={10}
-                    value={value}
-                    onChange={(e) => setter(Number(e.target.value))}
-                    className="w-16 text-center border border-gray-600 rounded-lg py-1.5 font-bold bg-gray-800 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                  <span className="text-sm text-gray-400">pts</span>
+        <form onSubmit={handleSavePoints} className="flex flex-col gap-5">
+
+          {/* Phase de groupes */}
+          <div>
+            <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-2">Phase de groupes</p>
+            <div className="flex flex-col gap-2">
+              {[
+                { label: "Score exact", value: exactScore, setter: setExactScore },
+                { label: "Bon vainqueur + bonne différence", value: correctDiff, setter: setCorrectDiff },
+                { label: "Bon vainqueur (ou nul correct)", value: correctWinner, setter: setCorrectWinner },
+              ].map(({ label, value, setter }) => (
+                <div key={label} className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">{label}</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number" min={-10} max={10} value={value}
+                      onChange={(e) => setter(Number(e.target.value))}
+                      className="w-16 text-center border border-gray-600 rounded-lg py-1.5 font-bold bg-gray-800 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-400">pts</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Phase éliminatoire */}
+          <div>
+            <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-2">Phase éliminatoire (16es → Finale)</p>
+            <div className="flex flex-col gap-2">
+              {[
+                { label: "Score exact à 90 min", value: koExactScore, setter: setKoExactScore },
+                { label: "Bon vainqueur / bon nul à 90 min", value: koCorrectOutcome, setter: setKoCorrectOutcome },
+                { label: "Bonus : bon vainqueur en prolong.", value: koETBonus, setter: setKoETBonus },
+                { label: "Bonus : score exact en prolong.", value: koETExact, setter: setKoETExact },
+                { label: "Bonus : bon vainqueur aux TAB", value: koTABBonus, setter: setKoTABBonus },
+              ].map(({ label, value, setter }) => (
+                <div key={label} className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">{label}</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number" min={0} max={10} value={value}
+                      onChange={(e) => setter(Number(e.target.value))}
+                      className="w-16 text-center border border-gray-600 rounded-lg py-1.5 font-bold bg-gray-800 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-gray-400">pts</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="flex gap-2">
             <button
-              type="submit"
-              disabled={saving}
+              type="submit" disabled={saving}
               className="flex-1 bg-red-700 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-red-800 disabled:opacity-40 transition"
             >
               {saving ? "Sauvegarde…" : saved ? "✓ Sauvegardé" : "Enregistrer"}
             </button>
             <button
-              type="button"
-              onClick={handleRecalculate}
-              disabled={recalculating}
+              type="button" onClick={handleRecalculate} disabled={recalculating}
               className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-gray-600 disabled:opacity-40 transition"
             >
               {recalculating ? "Recalcul…" : "Recalculer les points"}
