@@ -47,14 +47,24 @@ export async function GET(req: Request) {
     const isFinished = apiMatch.status === "FINISHED";
     const isLive = apiMatch.status === "IN_PLAY" || apiMatch.status === "PAUSED";
 
-    const homeScore = apiMatch.score?.fullTime?.home ?? null;
-    const awayScore = apiMatch.score?.fullTime?.away ?? null;
+    const isPenaltyShootout = apiMatch.score?.duration === "PENALTY_SHOOTOUT";
+    const isExtraTime = apiMatch.score?.duration === "EXTRA_TIME";
 
-    // Prolongations et TAB (phase éliminatoire)
-    const aetHomeScore = apiMatch.score?.extraTime?.home ?? null;
-    const aetAwayScore = apiMatch.score?.extraTime?.away ?? null;
+    // Pour les matchs qui finissent aux TAB, football-data.org met le score TAB dans fullTime.
+    // Le vrai score à 90 min est dans score.extraTime (score cumulé après prolongations).
+    // Pour les matchs en temps réglementaire ou prolong. sans TAB, fullTime = score 90 min.
+    const homeScore = isPenaltyShootout
+      ? (apiMatch.score?.extraTime?.home ?? null)
+      : (apiMatch.score?.fullTime?.home ?? null);
+    const awayScore = isPenaltyShootout
+      ? (apiMatch.score?.extraTime?.away ?? null)
+      : (apiMatch.score?.fullTime?.away ?? null);
 
-    // Vainqueur aux tirs au but
+    // Score après prolongations (uniquement si prolong. sans TAB)
+    const aetHomeScore = isExtraTime ? (apiMatch.score?.fullTime?.home ?? null) : null;
+    const aetAwayScore = isExtraTime ? (apiMatch.score?.fullTime?.away ?? null) : null;
+
+    // Vainqueur aux tirs au but (depuis score.penalties)
     let penaltyWinner: string | null = null;
     const penHome = apiMatch.score?.penalties?.home;
     const penAway = apiMatch.score?.penalties?.away;
