@@ -3,16 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-type MemberWithBets = {
-  userId: string;
-  leagueId: string;
-  user: {
-    id: string;
-    username: string;
-    bets: { points: number | null }[];
-  };
-};
-
 // GET /api/leagues/[id]/standings — classement d'une ligue
 export async function GET(
   _req: NextRequest,
@@ -25,17 +15,31 @@ export async function GET(
         include: {
           bets: {
             where: { points: { not: null } },
+            include: {
+              match: {
+                select: { homeScore: true, awayScore: true },
+              },
+            },
           },
         },
       },
     },
   });
 
-  const standings = (members as MemberWithBets[])
+  const standings = members
     .map((m) => {
       const bets = m.user.bets;
       const totalPoints = bets.reduce((sum, b) => sum + (b.points ?? 0), 0);
-      const exactScores = bets.filter((b) => b.points === 3).length;
+
+      // Score exact à 90 min (comparaison directe avec le score réel du match)
+      const exactScores = bets.filter(
+        (b) =>
+          b.match.homeScore !== null &&
+          b.match.awayScore !== null &&
+          b.predictedHome === b.match.homeScore &&
+          b.predictedAway === b.match.awayScore
+      ).length;
+
       const correctWinners = bets.filter(
         (b) => b.points !== null && b.points > 0
       ).length;
@@ -50,7 +54,6 @@ export async function GET(
       };
     })
     .sort((a, b) => {
-      // Tri : points → scores exacts → bons vainqueurs
       if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
       if (b.exactScores !== a.exactScores) return b.exactScores - a.exactScores;
       return b.correctWinners - a.correctWinners;
