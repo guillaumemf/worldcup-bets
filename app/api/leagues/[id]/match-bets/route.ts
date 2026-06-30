@@ -60,15 +60,22 @@ export async function GET(
 
     const memberBets = league.members.map((m) => {
       const bet = betsByUser.get(m.userId);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const b = bet as any;
       return {
         userId: m.userId,
         username: m.user.username,
         predictedHome: bet?.predictedHome ?? null,
         predictedAway: bet?.predictedAway ?? null,
+        predictedETHome: b?.predictedETHome ?? null,
+        predictedETAway: b?.predictedETAway ?? null,
+        predictedPenaltyWinner: b?.predictedPenaltyWinner ?? null,
         points: bet?.points ?? null,
       };
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mx = match as any;
     return {
       id: match.id,
       homeTeam: match.homeTeam,
@@ -78,6 +85,9 @@ export async function GET(
       status: match.status,
       homeScore: match.homeScore,
       awayScore: match.awayScore,
+      aetHomeScore: mx.aetHomeScore ?? null,
+      aetAwayScore: mx.aetAwayScore ?? null,
+      penaltyWinner: mx.penaltyWinner ?? null,
       memberBets,
     };
   });

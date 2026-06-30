@@ -36,6 +36,9 @@ type MemberBet = {
   username: string;
   predictedHome: number | null;
   predictedAway: number | null;
+  predictedETHome: number | null;
+  predictedETAway: number | null;
+  predictedPenaltyWinner: string | null;
   points: number | null;
 };
 
@@ -48,8 +51,15 @@ type MatchWithBets = {
   status: string;
   homeScore: number | null;
   awayScore: number | null;
+  aetHomeScore: number | null;
+  aetAwayScore: number | null;
+  penaltyWinner: string | null;
   memberBets: MemberBet[];
 };
+
+const KNOCKOUT_STAGES = new Set([
+  "ROUND_OF_32", "ROUND_OF_16", "QUARTER_FINAL", "SEMI_FINAL", "THIRD_PLACE", "FINAL",
+]);
 
 type League = {
   id: string;
@@ -214,7 +224,7 @@ export default function LeaguePage() {
                         </div>
 
                         {/* Score du match */}
-                        <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className="flex items-center justify-between gap-2 mb-1">
                           <span className="font-semibold text-right flex-1">{match.homeTeam}</span>
                           <div className="flex items-center gap-2 text-2xl font-bold">
                             <span>{match.homeScore ?? "?"}</span>
@@ -224,11 +234,37 @@ export default function LeaguePage() {
                           <span className="font-semibold text-left flex-1">{match.awayTeam}</span>
                         </div>
 
+                        {/* Prolongations et TAB (phase éliminatoire) */}
+                        {KNOCKOUT_STAGES.has(match.stage) && match.aetHomeScore !== null && (
+                          <div className="flex flex-col items-center gap-0.5 mb-3">
+                            <span className="text-xs text-gray-500">
+                              Prolong. :&nbsp;
+                              <span className="text-gray-300 font-semibold">
+                                {match.aetHomeScore} – {match.aetAwayScore}
+                              </span>
+                            </span>
+                            {match.penaltyWinner && (
+                              <span className="text-xs text-gray-500">
+                                TAB :&nbsp;
+                                <span className="text-gray-300 font-semibold">
+                                  {match.penaltyWinner === "home" ? match.homeTeam : match.awayTeam}
+                                </span>
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {/* Espacement si pas d'AET */}
+                        {!(KNOCKOUT_STAGES.has(match.stage) && match.aetHomeScore !== null) && (
+                          <div className="mb-3" />
+                        )}
+
                         {/* Paris de tous les membres */}
                         <LeagueBetsPanel
                           memberBets={match.memberBets}
                           currentUserId={userId}
                           showPoints={!isLive}
+                          homeTeam={match.homeTeam}
+                          awayTeam={match.awayTeam}
                         />
                       </div>
                     );
