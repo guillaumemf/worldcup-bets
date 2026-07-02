@@ -50,19 +50,42 @@ export async function GET(req: Request) {
     const isPenaltyShootout = apiMatch.score?.duration === "PENALTY_SHOOTOUT";
     const isExtraTime = apiMatch.score?.duration === "EXTRA_TIME";
 
-    // Pour les matchs qui finissent aux TAB, football-data.org met le score TAB dans fullTime.
-    // Le vrai score à 90 min est dans score.extraTime (score cumulé après prolongations).
-    // Pour les matchs en temps réglementaire ou prolong. sans TAB, fullTime = score 90 min.
-    const homeScore = isPenaltyShootout
-      ? (apiMatch.score?.extraTime?.home ?? null)
-      : (apiMatch.score?.fullTime?.home ?? null);
-    const awayScore = isPenaltyShootout
-      ? (apiMatch.score?.extraTime?.away ?? null)
-      : (apiMatch.score?.fullTime?.away ?? null);
+    // ── Score 90 min (temps réglementaire) ───────────────────────────────────
+    //
+    // REGULAR          : fullTime = score final 90 min → on l'utilise directement
+    // PENALTY_SHOOTOUT : fullTime = agrégat aberrant (inclut les pens) → on utilise extraTime
+    //                    extraTime = score cumulé après prolong. (= score 90 min, aucun but en prolong.)
+    // EXTRA_TIME       : fullTime = score final après prolong. (ex. 3-2)
+    //                    → NE PAS écraser homeScore/awayScore.
+    //                    Le score 90 min (nul) a été stocké lors des syncs LIVE en temps réglementaire.
+    //                    Dès que duration passe à "EXTRA_TIME", fullTime reflète le score live en prolong.
+    //                    On préserve donc la valeur déjà en base (le nul à 90 min).
+    let homeScore: number | null = null;
+    let awayScore: number | null = null;
+    const updateRegScore = !isExtraTime;
 
-    // Score après prolongations (uniquement si prolong. sans TAB)
-    const aetHomeScore = isExtraTime ? (apiMatch.score?.fullTime?.home ?? null) : null;
-    const aetAwayScore = isExtraTime ? (apiMatch.score?.fullTime?.away ?? null) : null;
+    if (updateRegScore) {
+      homeScore = isPenaltyShootout
+        ? (apiMatch.score?.extraTime?.home ?? null)
+        : (apiMatch.score?.fullTime?.home ?? null);
+      awayScore = isPenaltyShootout
+        ? (apiMatch.score?.extraTime?.away ?? null)
+        : (apiMatch.score?.fullTime?.away ?? null);
+    }
+
+    // ── Score après prolongations ─────────────────────────────────────────────
+    // EXTRA_TIME       : fullTime = score final après prolong.
+    // PENALTY_SHOOTOUT : extraTime = score cumulé après prolong. (avant TAB)
+    const aetHomeScore = isExtraTime
+      ? (apiMatch.score?.fullTime?.home ?? null)
+      : isPenaltyShootout
+      ? (apiMatch.score?.extraTime?.home ?? null)
+      : null;
+    const aetAwayScore = isExtraTime
+      ? (apiMatch.score?.fullTime?.away ?? null)
+      : isPenaltyShootout
+      ? (apiMatch.score?.extraTime?.away ?? null)
+      : null;
 
     // Vainqueur aux tirs au but (depuis score.penalties)
     let penaltyWinner: string | null = null;
@@ -81,8 +104,8 @@ export async function GET(req: Request) {
     await prisma.match.update({
       where: { id: dbMatch.id },
       data: {
-        homeScore,
-        awayScore,
+        // Pour EXTRA_TIME : homeScore/awayScore intentionnellement préservés (score 90 min en base)
+        ...(updateRegScore ? { homeScore, awayScore } : {}),
         aetHomeScore,
         aetAwayScore,
         penaltyWinner,
@@ -92,7 +115,10 @@ export async function GET(req: Request) {
       },
     });
 
-    if (isFinished && homeScore !== null && awayScore !== null) {
+    // Pour EXTRA_TIME FINISHED : homeScore vient du DB (pas de la variable locale)
+    const effectiveHomeScore = isExtraTime ? dbMatch.homeScore : homeScore;
+    const effectiveAwayScore = isExtraTime ? dbMatch.awayScore : awayScore;
+    if (isFinished && effectiveHomeScore !== null && effectiveAwayScore !== null) {
       finishedMatchIds.push(dbMatch.id);
     }
 
