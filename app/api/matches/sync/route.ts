@@ -32,7 +32,13 @@ export async function GET(req: Request) {
   const ids = matches.map((m) => m.externalId).join(",");
   const res = await fetch(
     `https://api.football-data.org/v4/matches?ids=${ids}`,
-    { headers: { "X-Auth-Token": API_KEY } }
+    {
+      headers: { "X-Auth-Token": API_KEY },
+      // Next.js 14 met les fetch() en cache par défaut (Data Cache Vercel, clé = URL).
+      // Quand la liste d'ids ne change plus (ex: entre deux tours), la réponse reste
+      // figée indéfiniment et le sync réécrit d'anciennes données. no-store = toujours frais.
+      cache: "no-store",
+    }
   );
 
   if (!res.ok) {
