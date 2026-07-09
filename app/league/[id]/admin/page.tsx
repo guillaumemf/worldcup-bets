@@ -52,7 +52,7 @@ export default function LeagueAdminPage() {
 
   useEffect(() => {
     const uid = localStorage.getItem("userId");
-    if (!uid) { router.push("/"); return; }
+    if (!uid) { router.push("/login"); return; }
     setUserId(uid);
 
     fetch(`/api/leagues/${id}`)

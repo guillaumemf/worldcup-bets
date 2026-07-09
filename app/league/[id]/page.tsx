@@ -82,7 +82,7 @@ export default function LeaguePage() {
 
   useEffect(() => {
     const uid = localStorage.getItem("userId");
-    if (!uid) { router.push("/"); return; }
+    if (!uid) { router.push("/login"); return; }
     setUserId(uid);
   }, [router]);
 

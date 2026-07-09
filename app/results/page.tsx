@@ -40,7 +40,7 @@ export default function ResultsPage() {
 
   useEffect(() => {
     const id = localStorage.getItem("userId");
-    if (!id) { router.push("/"); return; }
+    if (!id) { router.push("/login"); return; }
     setUserId(id);
 
     fetch(`/api/users/${id}/bets`)

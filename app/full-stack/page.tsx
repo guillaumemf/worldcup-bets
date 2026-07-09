@@ -2,7 +2,7 @@ export const metadata = {
   title: "Le full stack vous répond",
 };
 
-export default function Home() {
+export default function FullStackPage() {
   return (
     <div className="fixed inset-0 bg-black flex flex-col items-center justify-center">
       {/* Photo en plein écran */}

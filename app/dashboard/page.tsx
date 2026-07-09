@@ -54,7 +54,7 @@ export default function Dashboard() {
   useEffect(() => {
     const id = localStorage.getItem("userId");
     const name = localStorage.getItem("username");
-    if (!id) { router.push("/"); return; }
+    if (!id) { router.push("/login"); return; }
     setUserId(id);
     setUsername(name);
   }, [router]);
@@ -116,7 +116,7 @@ export default function Dashboard() {
             Mes résultats →
           </Link>
           <button
-            onClick={() => { localStorage.clear(); router.push("/"); }}
+            onClick={() => { localStorage.clear(); router.push("/login"); }}
             className="text-sm text-gray-400 hover:text-gray-400"
           >
             Changer d'utilisateur
